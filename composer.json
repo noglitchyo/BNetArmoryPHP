@@ -1,0 +1,17 @@
+{
+    "name"       : "Skw33d/BNetArmory",
+    "description": "BNetArmory in an library working with Battle.net API for World of Warcraft",
+    "authors" : [
+        {
+            "name"    : "Maxime Elomari",
+            "email"   : "maxime.elomari@gmail.com",
+            "homepage": "http://www.maximeelomari.com",
+            "role"    : "Developer"
+        }
+    ],
+    "autoload" : {
+        "psr-0" : {
+            "" : "src/"
+        }
+    }
+}
