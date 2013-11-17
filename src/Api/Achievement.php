@@ -14,9 +14,18 @@ namespace Api;
  */
 class Achievement extends \ApiMapper
 {
-	/**
-	 * @access	private
-	 * @var	string
-	 */
-	protected $urlPattern = 'api.status';
+    public function fetch(array $args)
+    {
+        $this->id = $args[0];
+    }
+    
+    public function getUrl()
+    {
+        return 'achievement/'.$this->id;
+    }
+
+    public function getFields()
+    {
+        return array();
+    }
 }

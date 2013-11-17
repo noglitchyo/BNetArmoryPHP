@@ -13,33 +13,5 @@ class Data extends API
 {
 	protected $urlPattern = 'api.status.fields';
 
-	public function getBattlegroups ( )
-	{
-		$this->urlTrailingSlash = true;
-	}
 
-	public function getCharacter ( $fields )
-	{
-
-	}
-
-	public function getGuild ( $fields )
-	{
-
-	}
-
-	public function getItemClasses ( )
-	{
-
-	}
-
-	public function getTalents ( )
-	{
-
-	}
-
-	public function getPetTypes ( )
-	{
-
-	}
 }
