@@ -1,5 +1,7 @@
 <?php
 /**
+ * Class Armory
+ *
  * Armory class is the one to call for working with BNetArmory
  * This new revision work with Composer and is better structured.
  * All the configuration can be controlled by this class.
@@ -127,23 +129,25 @@ class Armory
         if ( ! file_exists(__DIR__.DIRECTORY_SEPARATOR.$this->apiDirectory.DIRECTORY_SEPARATOR.$matches[1].'.php'))
             throw new Exception('No mapped API '.$matches[1].' in '.$this->apiDirectory, 1);
 
-        $reflector  = new ReflectionClass($apiClass);
-        $api        = $reflector->newInstanceArgs($argsForMappedApi);
+        $api = new $apiClass($this);
+        $api->fetch($argsForMappedApi);
 
-        if ( ! $this->cacheEnabled || $this->cache->isCacheExpired($api) || $this->refreshCacheNextRequest) {
-
+        if ( ! $this->cacheEnabled || ($this->cache->isCacheExpired($api) && $this->cacheEnabled) || $this->refreshCacheNextRequest) {
+            
             $request  = new Request($api, $this);
             $response = json_decode($request->execute(), true);
 
             if (isset($response['status']) && isset($response['reason']))
                 throw new Exception($response['reason'], 404);
 
+            $this->refreshCacheNextRequest = false;
+            
             $api->map($response);
 
             if ($this->cacheEnabled)
                 $this->cache->put($api);
             
-            $this->refreshCacheNextRequest = false;
+            
         }
         else
             $api = $this->cache->get($api);
