@@ -1,5 +1,7 @@
 <?php
 /**
+ * Class ApiMapper
+ *
  * Abstract class ApiMapper.
  * This class describe features required for implementing a new API mapper.
  * ApiMapper are PHP objects representing each API services purposed by Battle.net
@@ -26,6 +28,13 @@
  */
 abstract class ApiMapper
 {
+    /**
+     * Armory instance
+     * @var \Armory
+     * @access protected
+     */
+    protected $armory;
+
     /**
      * Timestamp where the API was put into cached
      * @var int
@@ -60,6 +69,23 @@ abstract class ApiMapper
     abstract public function getFields();
 
     /**
+     * Implement this function for set the required fields like realm, ID, or more...
+     * @access public
+     * @return void
+     */
+    abstract public function fetch(array $args);
+
+    /**
+     * ApiMapper need to work with Armory for getting childs object recursively and 
+     * work with the Request/Cache system implemented.
+     * @param Armory $armory
+     */
+    final public function __construct(Armory $armory)
+    {
+        $this->armory = $armory;
+    }
+
+    /**
      * Map data from an array to the ApiMapper as his properties.
      * Setter can be define in the class by implementing method following this pattern : setPropertieName
      * It's useful when you get data like members from Guild API who is a multidimensionnal array with ApiMapper
@@ -89,7 +115,7 @@ abstract class ApiMapper
         if (is_array($data)) {
             foreach ($data as $key => $value) {
                 if (is_array($value) && class_exists($class= '\Api\\'.ucwords($key))) {
-                    $pushed[$key] = new $class();
+                    $pushed[$key] = new $class($this->armory);
                     $pushed[$key]->map($value);
                 }
                 else
@@ -123,5 +149,13 @@ abstract class ApiMapper
     public function __wakeup()
     {
         $this->fromCache = true;
+    }
+    
+    public function __sleep()
+    {
+        $properties = get_object_vars($this);
+        unset($properties['armory']);
+
+        return array_keys($properties);
     }
 }
