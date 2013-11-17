@@ -1,5 +1,7 @@
 <?php
 /**
+ * Class Cache
+ *
  * Cache system for BNetArmoryPHP
  * Serialize ApiMapper and cache them in specified folder by Armory::$cacheDirectory
  * Files are base64_encode for no problems with filename.
@@ -79,6 +81,8 @@ class Cache
 
     /**
      * Return local path to cached object file
+     * Cache is stored in specified folder by Armory::$cacheDirectory.
+     * The next of the path is defined by <Region>/<Locale>/<Api>/<Realm*>/<base64_encode(Identifier)>
      * @param \ApiMapper $api A mapped object
      * @access private
      * @return \ApiMapper|bool
@@ -89,6 +93,9 @@ class Cache
         $index = count($urlExploded) - 1;
         $urlExploded[$index] = base64_encode($urlExploded[$index]);
 
-        return $this->armory->cacheDirectory.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, implode('/', $urlExploded));
+        return  $this->armory->cacheDirectory.DIRECTORY_SEPARATOR.
+                $this->armory->region.DIRECTORY_SEPARATOR.
+                $this->armory->locale.DIRECTORY_SEPARATOR.
+                str_replace('/', DIRECTORY_SEPARATOR, implode('/', $urlExploded));
     }
 }
